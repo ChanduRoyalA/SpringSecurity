@@ -1,4 +1,4 @@
-package com.learn.security;
+package com.learn.security.model;
 
 public class Student {
     private String name;

@@ -1,0 +1,49 @@
+package com.learn.security.service;
+
+import com.learn.security.model.User;
+import com.learn.security.repo.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Collection;
+import java.util.List;
+
+@Service
+public class UserService  {
+
+
+    @Autowired
+    private UserRepo userRepo;
+
+    public User getUser(Long id){
+       User user =  userRepo.findById(id).get();
+       return user;
+    }
+
+    public User addUser(User user){
+        if(user.getUserPassword()!=null && user.getUserName()!=null){
+            if(user.getUserRole()!=null){
+                userRepo.save(user);
+            }
+            else{
+                user.setUserRole("USER");
+                userRepo.save(user);
+            }
+        }
+        else{
+            System.out.println("User and Password are Required");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"User and Password are Required");
+        }
+
+        return user;
+    }
+
+    public Collection<User> getAllUsers() {
+        List<User> allUsers = userRepo.findAll();
+        return allUsers;
+    }
+}
