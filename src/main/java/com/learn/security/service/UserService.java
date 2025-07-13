@@ -5,6 +5,7 @@ import com.learn.security.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +20,8 @@ public class UserService  {
     @Autowired
     private UserRepo userRepo;
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12); // object to encrypt the text
+
     public User getUser(Long id){
        User user =  userRepo.findById(id).get();
        return user;
@@ -26,6 +29,8 @@ public class UserService  {
 
     public User addUser(User user){
         if(user.getUserPassword()!=null && user.getUserName()!=null){
+            // encrypt the password
+            user.setUserPassword(encoder.encode(user.getUserPassword()));
             if(user.getUserRole()!=null){
                 userRepo.save(user);
             }
